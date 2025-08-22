@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1DCCFCD42DF3A4BA00B82C06 /* FitnessApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitnessApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DCCFCE12DF3A4BB00B82C06 /* FitnessAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitnessAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DCCFCEB2DF3A4BB00B82C06 /* FitnessAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitnessAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DCCFCD42DF3A4BA00B82C06 /* Rapid Fitness Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rapid Fitness Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DCCFCE12DF3A4BB00B82C06 /* Rapid Fitness TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Rapid Fitness TrackerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DCCFCEB2DF3A4BB00B82C06 /* Rapid Fitness TrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Rapid Fitness TrackerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		1DCCFCD52DF3A4BA00B82C06 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1DCCFCD42DF3A4BA00B82C06 /* FitnessApp.app */,
-				1DCCFCE12DF3A4BB00B82C06 /* FitnessAppTests.xctest */,
-				1DCCFCEB2DF3A4BB00B82C06 /* FitnessAppUITests.xctest */,
+				1DCCFCD42DF3A4BA00B82C06 /* Rapid Fitness Tracker.app */,
+				1DCCFCE12DF3A4BB00B82C06 /* Rapid Fitness TrackerTests.xctest */,
+				1DCCFCEB2DF3A4BB00B82C06 /* Rapid Fitness TrackerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1DCCFCD32DF3A4BA00B82C06 /* FitnessApp */ = {
+		1DCCFCD32DF3A4BA00B82C06 /* Rapid Fitness Tracker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DCCFCF52DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessApp" */;
+			buildConfigurationList = 1DCCFCF52DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness Tracker" */;
 			buildPhases = (
 				1DCCFCD02DF3A4BA00B82C06 /* Sources */,
 				1DCCFCD12DF3A4BA00B82C06 /* Frameworks */,
@@ -110,16 +110,16 @@
 			fileSystemSynchronizedGroups = (
 				1DCCFCD62DF3A4BA00B82C06 /* FitnessApp */,
 			);
-			name = FitnessApp;
+			name = "Rapid Fitness Tracker";
 			packageProductDependencies = (
 			);
 			productName = FitnessApp;
-			productReference = 1DCCFCD42DF3A4BA00B82C06 /* FitnessApp.app */;
+			productReference = 1DCCFCD42DF3A4BA00B82C06 /* Rapid Fitness Tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1DCCFCE02DF3A4BB00B82C06 /* FitnessAppTests */ = {
+		1DCCFCE02DF3A4BB00B82C06 /* Rapid Fitness TrackerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DCCFCF82DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessAppTests" */;
+			buildConfigurationList = 1DCCFCF82DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness TrackerTests" */;
 			buildPhases = (
 				1DCCFCDD2DF3A4BB00B82C06 /* Sources */,
 				1DCCFCDE2DF3A4BB00B82C06 /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				1DCCFCE42DF3A4BB00B82C06 /* FitnessAppTests */,
 			);
-			name = FitnessAppTests;
+			name = "Rapid Fitness TrackerTests";
 			packageProductDependencies = (
 			);
 			productName = FitnessAppTests;
-			productReference = 1DCCFCE12DF3A4BB00B82C06 /* FitnessAppTests.xctest */;
+			productReference = 1DCCFCE12DF3A4BB00B82C06 /* Rapid Fitness TrackerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		1DCCFCEA2DF3A4BB00B82C06 /* FitnessAppUITests */ = {
+		1DCCFCEA2DF3A4BB00B82C06 /* Rapid Fitness TrackerUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DCCFCFB2DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessAppUITests" */;
+			buildConfigurationList = 1DCCFCFB2DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness TrackerUITests" */;
 			buildPhases = (
 				1DCCFCE72DF3A4BB00B82C06 /* Sources */,
 				1DCCFCE82DF3A4BB00B82C06 /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				1DCCFCEE2DF3A4BB00B82C06 /* FitnessAppUITests */,
 			);
-			name = FitnessAppUITests;
+			name = "Rapid Fitness TrackerUITests";
 			packageProductDependencies = (
 			);
 			productName = FitnessAppUITests;
-			productReference = 1DCCFCEB2DF3A4BB00B82C06 /* FitnessAppUITests.xctest */;
+			productReference = 1DCCFCEB2DF3A4BB00B82C06 /* Rapid Fitness TrackerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1DCCFCCF2DF3A4BA00B82C06 /* Build configuration list for PBXProject "FitnessApp" */;
+			buildConfigurationList = 1DCCFCCF2DF3A4BA00B82C06 /* Build configuration list for PBXProject "Rapid Fitness Tracker" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1DCCFCD32DF3A4BA00B82C06 /* FitnessApp */,
-				1DCCFCE02DF3A4BB00B82C06 /* FitnessAppTests */,
-				1DCCFCEA2DF3A4BB00B82C06 /* FitnessAppUITests */,
+				1DCCFCD32DF3A4BA00B82C06 /* Rapid Fitness Tracker */,
+				1DCCFCE02DF3A4BB00B82C06 /* Rapid Fitness TrackerTests */,
+				1DCCFCEA2DF3A4BB00B82C06 /* Rapid Fitness TrackerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		1DCCFCE32DF3A4BB00B82C06 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1DCCFCD32DF3A4BA00B82C06 /* FitnessApp */;
+			target = 1DCCFCD32DF3A4BA00B82C06 /* Rapid Fitness Tracker */;
 			targetProxy = 1DCCFCE22DF3A4BB00B82C06 /* PBXContainerItemProxy */;
 		};
 		1DCCFCED2DF3A4BB00B82C06 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1DCCFCD32DF3A4BA00B82C06 /* FitnessApp */;
+			target = 1DCCFCD32DF3A4BA00B82C06 /* Rapid Fitness Tracker */;
 			targetProxy = 1DCCFCEC2DF3A4BB00B82C06 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -395,6 +395,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TDSSB75A77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -407,7 +408,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FitnessApp;
+				PRODUCT_BUNDLE_IDENTIFIER = RapidFitnessTracker.FitnessApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -422,6 +423,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TDSSB75A77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -434,7 +436,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FitnessApp;
+				PRODUCT_BUNDLE_IDENTIFIER = RapidFitnessTracker.FitnessApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -456,7 +458,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitnessApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitnessApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rapid Fitness Tracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Rapid Fitness Tracker";
 			};
 			name = Debug;
 		};
@@ -474,7 +476,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitnessApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitnessApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rapid Fitness Tracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Rapid Fitness Tracker";
 			};
 			name = Release;
 		};
@@ -513,7 +515,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DCCFCCF2DF3A4BA00B82C06 /* Build configuration list for PBXProject "FitnessApp" */ = {
+		1DCCFCCF2DF3A4BA00B82C06 /* Build configuration list for PBXProject "Rapid Fitness Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DCCFCF32DF3A4BB00B82C06 /* Debug */,
@@ -522,7 +524,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DCCFCF52DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessApp" */ = {
+		1DCCFCF52DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DCCFCF62DF3A4BB00B82C06 /* Debug */,
@@ -531,7 +533,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DCCFCF82DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessAppTests" */ = {
+		1DCCFCF82DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness TrackerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DCCFCF92DF3A4BB00B82C06 /* Debug */,
@@ -540,7 +542,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DCCFCFB2DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "FitnessAppUITests" */ = {
+		1DCCFCFB2DF3A4BB00B82C06 /* Build configuration list for PBXNativeTarget "Rapid Fitness TrackerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DCCFCFC2DF3A4BB00B82C06 /* Debug */,

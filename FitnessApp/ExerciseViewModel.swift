@@ -15,6 +15,28 @@ class ExerciseViewModel: ObservableObject {
         let exercises: [RawExercise]
     }
     
+    struct RawExercise: Codable {
+        let name: String
+        let category: String?
+        let primary_muscles: [String]?
+        let equipment: [String]?
+        let difficulty: String?
+        let instructions: [String]?
+        let variation_on: [String]?
+        let video: String?
+        let description: String?
+        let license: License?
+        let license_author: String?
+        let secondary_muscles: [String]?
+        let variation_id: Int?
+    }
+    
+    struct License: Codable {
+        let full_name: String?
+        let short_name: String?
+        let url: String?
+    }
+    
     func fetchExercises() {
         guard let url = Bundle.main.url(forResource: "exercises", withExtension: "json") else {
             print("exercises.json not found in bundle.")
@@ -28,16 +50,17 @@ class ExerciseViewModel: ObservableObject {
                 self.exercises = response.exercises.map {
                     Exercise(
                         name: $0.name,
-                        type: $0.type ?? "unknown",
-                        muscle: $0.muscle ?? "unknown",
+                        type: $0.category ?? "unknown",
+                        muscle: $0.primary_muscles?.first ?? "unknown",
                         equipment: $0.equipment ?? [],
                         difficulty: $0.difficulty ?? "unknown"
                     )
                 }
-                print("Loaded \(self.exercises.count) exercises")
+
             }
         } catch {
             print("Failed to decode exercises.json:", error)
+            print("Error details:", error.localizedDescription)
         }
     }
 }

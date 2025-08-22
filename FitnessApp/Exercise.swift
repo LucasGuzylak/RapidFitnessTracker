@@ -32,11 +32,5 @@ struct Exercise: Identifiable {
     }
 }
 
-struct RawExercise: Codable {
-    let name: String
-    let type: String?
-    let muscle: String?
-    let equipment: [String]?
-    let difficulty: String?
-}
+
 
