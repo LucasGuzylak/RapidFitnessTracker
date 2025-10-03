@@ -88,12 +88,14 @@ struct WorkoutEntry: Codable, Equatable, Hashable {
     var name: String
     var weight: String
     var reps: String
+    var sets: String
 }
 
 struct LogButton: View {
     var name: String
     var reps: String
     var weight: String
+    var sets: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -103,7 +105,7 @@ struct LogButton: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
             
-            Text("\(weight) x \(reps) reps")
+            Text("\(weight) x \(reps) reps x \(sets) sets")
                 .font(.system(size: 16, weight: .bold, design: .monospaced))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.leading)
@@ -133,9 +135,19 @@ struct WeightInputView: View {
                 .background(Color.gray.opacity(0.2))
                 .foregroundColor(.white)
                 .cornerRadius(5)
-                .keyboardType(.numberPad)
+                .keyboardType(.decimalPad)
                 .onChange(of: weightInput) {
-                    weightInput = String(weightInput.filter { $0.isNumber }.prefix(5))
+                    let allowed = weightInput.filter { $0.isNumber || $0 == "." }
+                    var result = ""
+                    var dotSeen = false
+                    for ch in allowed {
+                        if ch == "." {
+                            if dotSeen { continue }
+                            dotSeen = true
+                        }
+                        result.append(ch)
+                    }
+                    weightInput = String(result.prefix(6))
                 }
             Menu(unit) {
                 Button("lbs") { unit = "lbs" }
@@ -153,7 +165,7 @@ struct WeightInputView: View {
 struct WorkoutButton: View {
     var title: String
     var icon: String
-    var onAdd: (String, String) -> Void
+    var onAdd: (String, String, String) -> Void
     var isExpanded: Bool
     var onToggle: () -> Void
     var isFavorite: Bool
@@ -162,6 +174,7 @@ struct WorkoutButton: View {
     @State private var textInput = ""
     @State private var repsInput = ""
     @State private var weightInput = ""
+    @State private var setsInput = ""
     @State private var wasPressed = false
     @State private var unit = "lbs"
     
@@ -207,7 +220,7 @@ struct WorkoutButton: View {
                             ZStack(alignment: .leading) {
                                 if repsInput.isEmpty {
                                     Text(wasPressed ? "Please Enter Reps" : "Enter Reps")
-                                        .foregroundColor(themeManager.currentTheme.textColor.opacity(0.4))
+                                        .foregroundColor(.white)
                                         .padding(.leading, 14)
                                 }
                                 TextField("", text: $repsInput)
@@ -215,9 +228,46 @@ struct WorkoutButton: View {
                                     .background(themeManager.currentTheme.secondaryTextColor.opacity(0.2))
                                     .foregroundColor(themeManager.currentTheme.textColor)
                                     .cornerRadius(8)
-                                    .keyboardType(.numberPad)
+                                    .keyboardType(.decimalPad)
                                     .onChange(of: repsInput) {
-                                        repsInput = String(repsInput.filter { $0.isNumber }.prefix(5))
+                                        let allowed = repsInput.filter { $0.isNumber || $0 == "." }
+                                        var result = ""
+                                        var dotSeen = false
+                                        for ch in allowed {
+                                            if ch == "." {
+                                                if dotSeen { continue }
+                                                dotSeen = true
+                                            }
+                                            result.append(ch)
+                                        }
+                                        repsInput = String(result.prefix(6))
+                                    }
+                            }
+                            
+                            ZStack(alignment: .leading) {
+                                if setsInput.isEmpty {
+                                    Text("Enter Sets")
+                                        .foregroundColor(.white)
+                                        .padding(.leading, 14)
+                                }
+                                TextField("", text: $setsInput)
+                                    .padding(10)
+                                    .background(themeManager.currentTheme.secondaryTextColor.opacity(0.2))
+                                    .foregroundColor(themeManager.currentTheme.textColor)
+                                    .cornerRadius(8)
+                                    .keyboardType(.decimalPad)
+                                    .onChange(of: setsInput) {
+                                        let allowed = setsInput.filter { $0.isNumber || $0 == "." }
+                                        var result = ""
+                                        var dotSeen = false
+                                        for ch in allowed {
+                                            if ch == "." {
+                                                if dotSeen { continue }
+                                                dotSeen = true
+                                            }
+                                            result.append(ch)
+                                        }
+                                        setsInput = String(result.prefix(6))
                                     }
                             }
                         }
@@ -226,7 +276,7 @@ struct WorkoutButton: View {
                             ZStack(alignment: .leading) {
                                 if weightInput.isEmpty {
                                     Text(wasPressed ? "Please Enter Weight" : "Enter Weight")
-                                        .foregroundColor(themeManager.currentTheme.textColor.opacity(0.4))
+                                        .foregroundColor(.white)
                                         .padding(.leading, 14)
                                 }
                                 TextField("", text: $weightInput)
@@ -234,9 +284,19 @@ struct WorkoutButton: View {
                                     .background(themeManager.currentTheme.secondaryTextColor.opacity(0.2))
                                     .foregroundColor(themeManager.currentTheme.textColor)
                                     .cornerRadius(8)
-                                    .keyboardType(.numberPad)
+                                    .keyboardType(.decimalPad)
                                     .onChange(of: weightInput) {
-                                        weightInput = String(weightInput.filter { $0.isNumber }.prefix(5))
+                                        let allowed = weightInput.filter { $0.isNumber || $0 == "." }
+                                        var result = ""
+                                        var dotSeen = false
+                                        for ch in allowed {
+                                            if ch == "." {
+                                                if dotSeen { continue }
+                                                dotSeen = true
+                                            }
+                                            result.append(ch)
+                                        }
+                                        weightInput = String(result.prefix(6))
                                     }
                             }
                             
@@ -255,9 +315,11 @@ struct WorkoutButton: View {
                     Button(action: {
                         wasPressed = true
                         if !repsInput.isEmpty && !weightInput.isEmpty {
-                            onAdd(repsInput, "\(weightInput) \(unit)")
+                            let setsValue = setsInput.isEmpty ? "1" : setsInput
+                            onAdd(repsInput, "\(weightInput) \(unit)", setsValue)
                             repsInput = ""
                             weightInput = ""
+                            setsInput = ""
                             withAnimation(.spring()) {
                                 onToggle()
                             }
@@ -267,7 +329,7 @@ struct WorkoutButton: View {
                         HStack {
                             Image(systemName: wasPressed && (repsInput.isEmpty || weightInput.isEmpty) ? "exclamationmark.triangle" : "plus.circle")
                                 .font(.system(size: 20))
-                            Text(wasPressed && (repsInput.isEmpty || weightInput.isEmpty) ? "Please Fill Both Fields" : "Add Workout")
+                            Text(wasPressed && (repsInput.isEmpty || weightInput.isEmpty) ? "Please Fill Reps and Weight" : "Add Workout")
                                 .font(.system(size: 16, weight: .bold))
                         }
                         .foregroundColor(themeManager.currentTheme.textColor)
@@ -277,9 +339,9 @@ struct WorkoutButton: View {
                         .background(wasPressed && (repsInput.isEmpty || weightInput.isEmpty) ? Color.orange : themeManager.currentTheme.accentColor)
                         .cornerRadius(8)
                     }
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 8)
                 }
-                .padding(.top, 12)
+                .padding(.top, 8)
                 .frame(height: 180)
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
@@ -324,6 +386,117 @@ class PastWorkoutStore: ObservableObject {
     
     init() {
         load()
+        // Add sample workouts for testing (remove this later)
+        // addSampleWorkouts()
+    }
+    
+    private func addSampleWorkouts() {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Sample workout 1 - Recent (2 days ago)
+        let workout1Date = calendar.date(byAdding: .day, value: -2, to: now)!
+        let workout1 = PastWorkout(
+            startTime: workout1Date,
+            entries: [
+                WorkoutEntry(name: "Barbell Bench Press", weight: "185", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "185", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "185", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Barbell Squat", weight: "225", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Barbell Squat", weight: "225", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Deadlift", weight: "275", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Deadlift", weight: "275", reps: "8", sets: "1")
+            ],
+            elapsedMinutes: 45
+        )
+        
+        // Sample workout 2 - Yesterday
+        let workout2Date = calendar.date(byAdding: .day, value: -1, to: now)!
+        let workout2 = PastWorkout(
+            startTime: workout2Date,
+            entries: [
+                WorkoutEntry(name: "Pull-Up", weight: "0", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Pull-Up", weight: "0", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Pull-Up", weight: "0", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Row", weight: "50", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Row", weight: "50", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Lat Pulldown", weight: "120", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Lat Pulldown", weight: "120", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Bicep Curl", weight: "25", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Bicep Curl", weight: "25", reps: "15", sets: "1")
+            ],
+            elapsedMinutes: 35
+        )
+        
+        // Sample workout 3 - 1 week ago (long workout)
+        let workout3Date = calendar.date(byAdding: .day, value: -7, to: now)!
+        let workout3 = PastWorkout(
+            startTime: workout3Date,
+            entries: [
+                WorkoutEntry(name: "Barbell Bench Press", weight: "205", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "205", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "205", reps: "6", sets: "1"),
+                WorkoutEntry(name: "Incline Dumbbell Press", weight: "70", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Incline Dumbbell Press", weight: "70", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Flyes", weight: "35", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Flyes", weight: "35", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Tricep Dips", weight: "0", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Tricep Dips", weight: "0", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Overhead Press", weight: "95", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Overhead Press", weight: "95", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Lateral Raises", weight: "20", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Lateral Raises", weight: "20", reps: "15", sets: "1")
+            ],
+            elapsedMinutes: 75
+        )
+        
+        // Sample workout 4 - 2 weeks ago
+        let workout4Date = calendar.date(byAdding: .day, value: -14, to: now)!
+        let workout4 = PastWorkout(
+            startTime: workout4Date,
+            entries: [
+                WorkoutEntry(name: "Barbell Squat", weight: "245", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Barbell Squat", weight: "245", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Barbell Squat", weight: "245", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Romanian Deadlift", weight: "225", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Romanian Deadlift", weight: "225", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Leg Press", weight: "315", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Leg Press", weight: "315", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Walking Lunges", weight: "0", reps: "20", sets: "1"),
+                WorkoutEntry(name: "Walking Lunges", weight: "0", reps: "20", sets: "1")
+            ],
+            elapsedMinutes: 50
+        )
+        
+        // Sample workout 5 - 3 days ago (exactly 1 hour)
+        let workout5Date = calendar.date(byAdding: .day, value: -3, to: now)!
+        let workout5 = PastWorkout(
+            startTime: workout5Date,
+            entries: [
+                WorkoutEntry(name: "Barbell Bench Press", weight: "195", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "195", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Barbell Bench Press", weight: "195", reps: "6", sets: "1"),
+                WorkoutEntry(name: "Incline Barbell Press", weight: "155", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Incline Barbell Press", weight: "155", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Press", weight: "65", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Press", weight: "65", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Flyes", weight: "40", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Dumbbell Flyes", weight: "40", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Tricep Dips", weight: "0", reps: "15", sets: "1"),
+                WorkoutEntry(name: "Tricep Dips", weight: "0", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Close-Grip Bench Press", weight: "135", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Close-Grip Bench Press", weight: "135", reps: "10", sets: "1"),
+                WorkoutEntry(name: "Overhead Press", weight: "105", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Overhead Press", weight: "105", reps: "8", sets: "1"),
+                WorkoutEntry(name: "Lateral Raises", weight: "25", reps: "12", sets: "1"),
+                WorkoutEntry(name: "Lateral Raises", weight: "25", reps: "12", sets: "1")
+            ],
+            elapsedMinutes: 60
+        )
+        
+        // Add all sample workouts
+        pastWorkouts = [workout1, workout2, workout3, workout4, workout5]
+        save()
     }
     
     func add(_ workout: PastWorkout) {
@@ -355,6 +528,18 @@ struct ContentView: View {
     @State private var entries: [WorkoutEntry] = []
     @StateObject private var pastWorkoutStore = PastWorkoutStore()
     @StateObject private var themeManager = ThemeManager()
+    @State private var isLightningStriking = false
+    
+    private func triggerLightning() {
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.5, blendDuration: 0)) {
+            isLightningStriking = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.3, blendDuration: 0)) {
+                isLightningStriking = false
+            }
+        }
+    }
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -362,7 +547,7 @@ struct ContentView: View {
                 (themeManager.currentTheme == .dark ? Color.black : Color.white)
                     .edgesIgnoringSafeArea(.all)
                 VStack {
-                    // Theme Toggle Button
+                    // Theme Toggle Button - Top Right
                     HStack {
                         Spacer()
                         Button(action: {
@@ -381,6 +566,7 @@ struct ContentView: View {
                                         .stroke(themeManager.currentTheme == .light ? .black : themeManager.currentTheme.accentColor, lineWidth: 2)
                                 )
                         }
+                        .buttonStyle(PlainButtonStyle())
                         .padding(.trailing, 20)
                         .padding(.top, 10)
                     }
@@ -399,10 +585,47 @@ struct ContentView: View {
                             .foregroundColor(themeManager.currentTheme.accentColor)
                             .shadow(color: themeManager.currentTheme.accentColor, radius: 10, x: 0, y: 0)
                     }
+                    .offset(y: -5)
                     .padding(.bottom, 20)
+                    .onTapGesture {
+                        triggerLightning()
+                    }
+                    .onAppear {
+                        // Trigger lightning with a 0.2 second delay when app opens or returns to home
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            triggerLightning()
+                        }
+                    }
+                    .overlay(
+                        // Big lightning bolt that appears without affecting layout
+                        Group {
+                            if isLightningStriking {
+                                ZStack {
+                                    // Outer glow
+                                    Image(systemName: "bolt.fill")
+                                        .font(.system(size: 70))
+                                        .foregroundColor(.pink)
+                                        .blur(radius: 10)
+                                        .opacity(0.8)
+                                    
+                                    // Main big bolt
+                                    Image(systemName: "bolt.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.pink)
+                                        .shadow(color: .pink, radius: 15, x: 0, y: 0)
+                                        .scaleEffect(isLightningStriking ? 1.2 : 0.8)
+                                        .opacity(1.0)
+                                }
+                                .transition(.scale.combined(with: .opacity))
+                                .animation(.spring(response: 0.3, dampingFraction: 0.6, blendDuration: 0), value: isLightningStriking)
+                            }
+                        }
+                        .offset(y: -15)
+                        .allowsHitTesting(false)
+                    )
                     Text("Welcome to Rapid")
                         .font(.system(size: 30, weight: .bold, design: .rounded))
-                        .foregroundColor(themeManager.currentTheme.textColor)
+                        .foregroundColor(isLightningStriking ? .pink : themeManager.currentTheme.textColor)
                         .padding(.bottom, 50)
                     NavigationLink(value: Route.LogWorkout) {
                         HStack{
@@ -438,22 +661,6 @@ struct ContentView: View {
                             )
                             .padding(.bottom, 30)
                     }
-                    Button(action: {}) {
-                        HStack {
-                            Text("Progression")
-                            Image(systemName: "chart.line.uptrend.xyaxis")
-                        }
-                            .font(.system(size: 20, weight: .bold, design: .monospaced))
-                            .foregroundColor(themeManager.currentTheme.textColor)
-                            .padding()
-                            .frame(width: 300, height: 80)
-                            .background(themeManager.currentTheme.cardBackgroundColor)
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(themeManager.currentTheme == .light ? .black : themeManager.currentTheme.accentColor, lineWidth: 2)
-                            )
-                    }
                 }
                 .padding()
             }
@@ -485,11 +692,50 @@ struct LogWorkout: View {
     @State private var showingDeleteAlert = false
     @State private var indexToDelete: Int?
     @State private var workoutStartTime = Date()
+    
+    private var savedWorkoutStartTime: Date {
+        if let savedTime = UserDefaults.standard.object(forKey: "workoutStartTime") as? Date {
+            return savedTime
+        }
+        // If no saved time, create one and save it
+        let newStartTime = Date()
+        UserDefaults.standard.set(newStartTime, forKey: "workoutStartTime")
+        return newStartTime
+    }
+    
+    private var isWorkoutActive: Bool {
+        return UserDefaults.standard.bool(forKey: "isWorkoutActive")
+    }
     let pastWorkoutStore: PastWorkoutStore
     @ObservedObject var themeManager: ThemeManager
     
     var count: Int {
         entries.count
+    }
+    
+    // Groups consecutive identical exercises (same name, reps, weight) by summing sets
+    private var groupedEntries: [(name: String, variants: [WorkoutEntry], totalSets: Int, range: Range<Int>)] {
+        var result: [(name: String, variants: [WorkoutEntry], totalSets: Int, range: Range<Int>)] = []
+        var i = 0
+        while i < entries.count {
+            let current = entries[i]
+            var j = i + 1
+            var variants: [WorkoutEntry] = [current]
+            var totalSets = max(Int(current.sets) ?? 0, 1)
+            while j < entries.count {
+                let next = entries[j]
+                if next.name == current.name {
+                    variants.append(next)
+                    totalSets += max(Int(next.sets) ?? 0, 1)
+                    j += 1
+                } else {
+                    break
+                }
+            }
+            result.append((name: current.name, variants: variants, totalSets: totalSets, range: i..<j))
+            i = j
+        }
+        return result
     }
     
     var body: some View {
@@ -536,15 +782,14 @@ struct LogWorkout: View {
                 } else {
                 ScrollView {
                         LazyVStack(spacing: 12) {
-                    ForEach(entries.indices, id: \.self) { i in
-                        let entry = entries[i]
+                    ForEach(Array(groupedEntries.enumerated()), id: \.offset) { displayIndex, group in
                                 ModernLogButton(
-                                    name: entry.name,
-                                    reps: entry.reps,
-                                    weight: entry.weight,
-                                    index: i,
+                                    name: group.name,
+                                    variants: group.variants,
+                                    totalSets: group.totalSets,
+                                    index: displayIndex,
                                     onDelete: {
-                                        indexToDelete = i
+                                        indexToDelete = group.range.lowerBound
                                         showingDeleteAlert = true
                                     },
                                     themeManager: themeManager
@@ -611,12 +856,17 @@ struct LogWorkout: View {
                 .alert("Finish your workout?", isPresented: $showAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Finish", role: .destructive) {
-                let elapsedTime = Date().timeIntervalSince(workoutStartTime)
+                let elapsedTime = Date().timeIntervalSince(savedWorkoutStartTime)
                 let elapsedMinutes = Int(elapsedTime / 60)
                 
                 // Save workout to past workouts
-                let pastWorkout = PastWorkout(startTime: workoutStartTime, entries: entries, elapsedMinutes: elapsedMinutes)
+                let pastWorkout = PastWorkout(startTime: savedWorkoutStartTime, entries: entries, elapsedMinutes: elapsedMinutes)
                 pastWorkoutStore.add(pastWorkout)
+                
+                // Clear workout state
+                UserDefaults.standard.removeObject(forKey: "workoutStartTime")
+                UserDefaults.standard.set(false, forKey: "isWorkoutActive")
+                UserDefaults.standard.removeObject(forKey: "currentWorkoutEntries")
                 
                 path.append(Route.FinishedWorkout(entries: entries, elapsedMinutes: elapsedMinutes))
             }
@@ -627,11 +877,33 @@ struct LogWorkout: View {
             Button("Cancel", role: .cancel) { }
             Button("Remove", role: .destructive) {
                 if let index = indexToDelete {
-                    entries.remove(at: index)
+                    // Remove the entire grouped range corresponding to this index
+                    if let group = groupedEntries.first(where: { $0.range.contains(index) }) {
+                        entries.removeSubrange(group.range)
+                    } else {
+                        entries.remove(at: index)
+                    }
                 }
             }
         } message: {
             Text("Are you sure you want to remove this exercise from your workout?")
+        }
+        .onAppear {
+            // Save workout start time to persist across app backgrounding/closure
+            UserDefaults.standard.set(Date(), forKey: "workoutStartTime")
+            UserDefaults.standard.set(true, forKey: "isWorkoutActive")
+            
+            // Restore entries if they exist
+            if let savedEntriesData = UserDefaults.standard.data(forKey: "currentWorkoutEntries"),
+               let savedEntries = try? JSONDecoder().decode([WorkoutEntry].self, from: savedEntriesData) {
+                entries = savedEntries
+            }
+        }
+        .onChange(of: entries) { _, newEntries in
+            // Save entries whenever they change
+            if let encoded = try? JSONEncoder().encode(newEntries) {
+                UserDefaults.standard.set(encoded, forKey: "currentWorkoutEntries")
+            }
         }
     }
 }
@@ -639,12 +911,13 @@ struct LogWorkout: View {
 // Modern log button component
 struct ModernLogButton: View {
     let name: String
-    let reps: String
-    let weight: String
+    let variants: [WorkoutEntry]
+    let totalSets: Int
     let index: Int
     let onDelete: () -> Void
     @ObservedObject var themeManager: ThemeManager
     @State private var isPressed = false
+    @State private var showDropdown = false
     
     var body: some View {
         HStack(spacing: 15) {
@@ -664,9 +937,38 @@ struct ModernLogButton: View {
                     .foregroundColor(themeManager.currentTheme.textColor)
                     .lineLimit(2)
                 
-                Text("\(weight) × \(reps) reps")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                VStack(alignment: .leading, spacing: 6) {
+                    if variants.count == 1 {
+                        Text("\(variants.first?.weight ?? "0") × \(variants.first?.reps ?? "0") reps × \(variants.first?.sets ?? "1") sets")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundColor(themeManager.currentTheme.accentColor)
+                    } else {
+                        HStack(spacing: 8) {
+                            Text("+\(variants.count) sets")
+                                .font(.system(size: 14, weight: .medium, design: .rounded))
+                                .foregroundColor(themeManager.currentTheme.accentColor)
+                            Spacer()
+                            Image(systemName: showDropdown ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(themeManager.currentTheme.accentColor)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(themeManager.currentTheme.accentColor.opacity(0.12))
+                        .cornerRadius(6)
+                        
+                        if showDropdown {
+                            VStack(alignment: .leading, spacing: 6) {
+                                ForEach(Array(variants.enumerated()), id: \.offset) { _, variant in
+                                    Text("\(variant.weight) × \(variant.reps) reps × \(variant.sets) sets")
+                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                        .foregroundColor(themeManager.currentTheme.accentColor)
+                                }
+                            }
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                        }
+                    }
+                }
             }
             
             Spacer()
@@ -691,13 +993,10 @@ struct ModernLogButton: View {
         .scaleEffect(isPressed ? 0.95 : 1.0)
         .animation(.easeInOut(duration: 0.1), value: isPressed)
         .onTapGesture {
-            withAnimation(.easeInOut(duration: 0.1)) {
-                isPressed = true
-            }
+            withAnimation(.easeInOut(duration: 0.1)) { isPressed = true }
+            withAnimation(.easeInOut(duration: 0.2)) { showDropdown.toggle() }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    isPressed = false
-                }
+                withAnimation(.easeInOut(duration: 0.1)) { isPressed = false }
             }
         }
     }
@@ -713,51 +1012,97 @@ struct FinishedWorkout: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color.orange, Color.red, Color.purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+            // Background matching app theme
+            (themeManager.currentTheme == .dark ? Color.black : Color.white)
                 .edgesIgnoringSafeArea(.all)
-            VStack(spacing: 30) {
+            
+            VStack(spacing: 40) {
+                Spacer()
+                
+                // Trophy icon with theme colors
                 Image(systemName: "trophy.fill")
-                    .foregroundStyle(.white)
+                    .foregroundColor(themeManager.currentTheme.accentColor)
                     .font(.system(size: 80))
                     .symbolEffect(.bounce)
-                    .shadow(color: .yellow, radius: 10)
-                Text("Great Job!")
-                    .font(.system(size: 50, weight: .bold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black, radius: 3)
-                Text("Workout Complete!")
-                    .font(.system(size: 30, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.9))
-                    .shadow(color: .black, radius: 2)
+                    .shadow(color: themeManager.currentTheme.accentColor.opacity(0.3), radius: 10)
                 
-                // Stats section
-                VStack(spacing: 15) {
-                    HStack(spacing: 40) {
-                        VStack {
-                            Text("\(entries.count)")
-                                .font(.system(size: 40, weight: .bold))
-                                .foregroundStyle(.white)
-                            Text("Exercises")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
-                        VStack {
-                            Text("\(elapsedMinutes)")
-                                .font(.system(size: 40, weight: .bold))
-                                .foregroundStyle(.white)
-                            Text("Minutes")
-                                .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
-                    }
-                    .padding(.top, 20)
+                // Main text
+                VStack(spacing: 12) {
+                    Text("Great Job!")
+                        .font(.system(size: 50, weight: .bold, design: .rounded))
+                        .foregroundColor(themeManager.currentTheme.textColor)
+                    
+                    Text("Workout Complete!")
+                        .font(.system(size: 30, weight: .medium, design: .rounded))
+                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                 }
+                
+                // Stats cards
+                HStack(spacing: 20) {
+                    // Exercises card
+                    VStack(spacing: 8) {
+                        Text("\(entries.count)")
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
+                            .foregroundColor(themeManager.currentTheme.accentColor)
+                        Text("Exercises")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                    }
+                    .frame(width: 120, height: 100)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(themeManager.currentTheme.cardBackgroundColor)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(themeManager.currentTheme == .light ? .black.opacity(0.3) : themeManager.currentTheme.accentColor.opacity(0.3), lineWidth: 1)
+                            )
+                    )
+                    
+                    // Minutes card
+                    VStack(spacing: 8) {
+                        Text("\(elapsedMinutes)")
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
+                            .foregroundColor(themeManager.currentTheme.accentColor)
+                        Text("Minutes")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                    }
+                    .frame(width: 120, height: 100)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(themeManager.currentTheme.cardBackgroundColor)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(themeManager.currentTheme == .light ? .black.opacity(0.3) : themeManager.currentTheme.accentColor.opacity(0.3), lineWidth: 1)
+                            )
+                    )
+                }
+                
+                Spacer()
+                
+                // Continue button
+                Button(action: {
+                    path = NavigationPath()
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20))
+                        Text("CONTINUE")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .tracking(1)
+                    }
+                    .foregroundColor(themeManager.currentTheme.textColor)
+                    .frame(width: 160, height: 50)
+                    .background(themeManager.currentTheme.accentColor)
+                    .cornerRadius(25)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(themeManager.currentTheme == .light ? .black.opacity(0.3) : themeManager.currentTheme.textColor.opacity(0.2), lineWidth: 1)
+                    )
+                }
+                .padding(.bottom, 50)
             }
-        }
-        .onAppear() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                path = NavigationPath()
-            }
+            .padding(.horizontal, 20)
         }
     }
 }
@@ -928,8 +1273,8 @@ struct SearchWorkout: View {
                                 WorkoutButton(
                                     title: exercise.name, 
                                     icon: "dumbbell",
-                                    onAdd: { reps, weight in
-                                        entries.append(WorkoutEntry(name: exercise.name, weight: weight, reps: reps))
+                                    onAdd: { reps, weight, sets in
+                                        entries.append(WorkoutEntry(name: exercise.name, weight: weight, reps: reps, sets: sets))
                                     },
                                     isExpanded: expandedExerciseId == exercise.id,
                                     onToggle: {
@@ -981,8 +1326,8 @@ struct SearchWorkout: View {
                                 WorkoutButton(
                                     title: exercise.name, 
                                     icon: "dumbbell",
-                                    onAdd: { reps, weight in
-                                        entries.append(WorkoutEntry(name: exercise.name, weight: weight, reps: reps))
+                                    onAdd: { reps, weight, sets in
+                                        entries.append(WorkoutEntry(name: exercise.name, weight: weight, reps: reps, sets: sets))
                                     },
                                     isExpanded: expandedExerciseId == exercise.id,
                                     onToggle: {
@@ -1033,6 +1378,52 @@ struct PastWorkouts: View {
     @State private var showingDeleteAlert = false
     @State private var workoutToDelete: PastWorkout? = nil
     
+    // Formats elapsed time to show hours and minutes if over an hour
+    private func formatElapsedTime(_ minutes: Int) -> (value: String, unit: String) {
+        if minutes >= 60 {
+            let hours = minutes / 60
+            let remainingMinutes = minutes % 60
+            if remainingMinutes == 0 {
+                return (value: "\(hours)", unit: hours == 1 ? "HOUR" : "HOURS")
+            } else {
+                return (value: "\(hours)h \(remainingMinutes)m", unit: "TOTAL")
+            }
+        } else {
+            return (value: "\(minutes)", unit: "MINUTES")
+        }
+    }
+    
+    // Groups consecutive identical exercises with smart combining
+    private func groupedEntries(for workout: PastWorkout) -> [(name: String, variants: [WorkoutEntry], totalSets: Int)] {
+        var result: [(name: String, variants: [WorkoutEntry], totalSets: Int)] = []
+        var i = 0
+        while i < workout.entries.count {
+            let current = workout.entries[i]
+            var j = i + 1
+            var variants: [WorkoutEntry] = [current]
+            var totalSets = max(Int(current.sets) ?? 0, 1)
+            
+            while j < workout.entries.count {
+                let next = workout.entries[j]
+                if next.name == current.name {
+                    // Check if same reps and weight - if so, combine sets
+                    if next.reps == current.reps && next.weight == current.weight {
+                        totalSets += max(Int(next.sets) ?? 0, 1)
+                    } else {
+                        // Different reps/weight, add as separate variant
+                        variants.append(next)
+                    }
+                    j += 1
+                } else {
+                    break
+                }
+            }
+            result.append((name: current.name, variants: variants, totalSets: totalSets))
+            i = j
+        }
+        return result
+    }
+    
     var body: some View {
         ZStack {
             // Background
@@ -1043,7 +1434,7 @@ struct PastWorkouts: View {
                 VStack(spacing: 8) {
                     VStack(spacing: 8) {
                         Text("WORKOUT HISTORY")
-                            .font(.system(size: 25, weight: .black, design: .rounded))
+                            .font(.system(size: 30, weight: .black, design: .rounded))
                             .foregroundColor(themeManager.currentTheme.textColor)
                             .tracking(2)
                         
@@ -1057,7 +1448,7 @@ struct PastWorkouts: View {
                     
                     if !pastWorkoutStore.pastWorkouts.isEmpty {
                         Text("Tap any workout to see details")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                             .padding(.bottom, 10)
                     }
@@ -1080,11 +1471,11 @@ struct PastWorkouts: View {
                         
                         VStack(spacing: 8) {
                             Text("No Workouts Yet")
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
                                 .foregroundColor(themeManager.currentTheme.textColor)
                             
                             Text("Complete your first workout to see it here")
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .font(.system(size: 18, weight: .medium, design: .rounded))
                                 .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                                 .multilineTextAlignment(.center)
                         }
@@ -1108,16 +1499,16 @@ struct PastWorkouts: View {
                                             }
                                         }
                                     }) {
-                                        VStack(alignment: .leading, spacing: 12) {
+                                        VStack(alignment: .leading, spacing: expandedWorkoutId == workout.id ? 12 : 6) {
                                             // Date and time row
                                             HStack {
-                                                VStack(alignment: .leading, spacing: 4) {
+                                                VStack(alignment: .leading, spacing: 2) {
                                                     Text(workout.startTime, style: .date)
-                                                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                                                        .font(.system(size: 22, weight: .bold, design: .rounded))
                                                         .foregroundColor(themeManager.currentTheme.textColor)
                                                     
                                                     Text("\(workout.startTime, style: .time) - \(workout.endTime, style: .time)")
-                                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                                        .font(.system(size: 16, weight: .medium, design: .rounded))
                                                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                                                 }
                                                 
@@ -1127,22 +1518,25 @@ struct PastWorkouts: View {
                                                 HStack(spacing: 12) {
                                                     VStack(spacing: 2) {
                                                         Text("\(workout.entries.count)")
-                                                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                                                            .font(.system(size: 24, weight: .bold, design: .rounded))
                                                             .foregroundColor(themeManager.currentTheme.accentColor)
                                                         Text("EXERCISES")
-                                                            .font(.system(size: 8, weight: .bold, design: .rounded))
+                                                            .font(.system(size: 10, weight: .bold, design: .rounded))
                                                             .foregroundColor(themeManager.currentTheme.secondaryTextColor)
                                                             .tracking(1)
                                                     }
                                                     
                                                     VStack(spacing: 2) {
-                                                        Text("\(workout.elapsedMinutes)")
-                                                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                                                        let timeFormat = formatElapsedTime(workout.elapsedMinutes)
+                                                        Text(timeFormat.value)
+                                                            .font(.system(size: 24, weight: .bold, design: .rounded))
                                                             .foregroundColor(themeManager.currentTheme.accentColor)
-                                                        Text("MINUTES")
-                                                            .font(.system(size: 8, weight: .bold, design: .rounded))
-                                                            .foregroundColor(themeManager.currentTheme.secondaryTextColor)
-                                                            .tracking(1)
+                                                        if !timeFormat.unit.isEmpty {
+                                                            Text(timeFormat.unit)
+                                                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                                                .foregroundColor(themeManager.currentTheme.secondaryTextColor)
+                                                                .tracking(1)
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1167,23 +1561,36 @@ struct PastWorkouts: View {
                                             Divider()
                                                 .background(themeManager.currentTheme.secondaryTextColor.opacity(0.3))
                                             
-                                            // Exercise details
+                                            // Exercise details with grouping
                                             VStack(alignment: .leading, spacing: 8) {
                                                 Text("Exercises:")
-                                                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                                                     .foregroundColor(themeManager.currentTheme.textColor)
                                                 
-                                                ForEach(workout.entries, id: \.name) { entry in
-                                                    HStack {
-                                                        Text("• \(entry.name)")
-                                                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                                                            .foregroundColor(themeManager.currentTheme.textColor.opacity(0.9))
-                                                        Spacer()
-                                                        Text("\(entry.weight) × \(entry.reps) reps")
-                                                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                                                            .foregroundColor(themeManager.currentTheme.accentColor)
+                                                ForEach(Array(groupedEntries(for: workout).enumerated()), id: \.offset) { _, group in
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        VStack(alignment: .leading, spacing: 2) {
+                                                            // Show exercise name only once
+                                                            HStack {
+                                                                Text("• \(group.name)")
+                                                                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                                                                    .foregroundColor(themeManager.currentTheme.textColor.opacity(0.9))
+                                                                Spacer()
+                                                            }
+                                                            .padding(.leading, 8)
+                                                            
+                                                            // Show variants without repeating name
+                                                            ForEach(Array(group.variants.enumerated()), id: \.offset) { index, variant in
+                                                                HStack {
+                                                                    Text("  \(variant.weight) × \(variant.reps) reps × \(variant.sets) sets")
+                                                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                                                        .foregroundColor(themeManager.currentTheme.accentColor)
+                                                                    Spacer()
+                                                                }
+                                                                .padding(.leading, 8)
+                                                            }
+                                                        }
                                                     }
-                                                    .padding(.leading, 8)
                                                 }
                                             }
                                             
@@ -1245,3 +1652,4 @@ struct PastWorkouts: View {
 #Preview {
     ContentView()
 }
+
